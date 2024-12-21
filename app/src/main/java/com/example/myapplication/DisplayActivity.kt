@@ -2,74 +2,47 @@ package com.example.myapplication
 
 import android.os.Bundle
 import android.widget.Button
-import android.widget.CalendarView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentManager
 
-import com.example.myapplication.databinding.ActivityMainBinding
+class DisplayActivity : AppCompatActivity(),
+    BlackFrag.OnSeekBarChangeListener,
+    WhiteFrag.OnDateChangeListener {
 
-class DisplayActivity : AppCompatActivity() {
-    private lateinit var fragmentManager: FragmentManager
-    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_display)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        val button = findViewById<Button>(R.id.frag1button)
-        val button2 = findViewById<Button>(R.id.frag2button)
+        val fragmentManager: FragmentManager = supportFragmentManager
 
-//        val calend=findViewById<CalendarView>(R.id.CalendarView)
-        supportFragmentManager.beginTransaction().replace(R.id.frame, BlackFrag.newInstance())
+        // Устанавливаем BlackFrag по умолчанию
+        fragmentManager.beginTransaction()
+            .replace(R.id.frame, BlackFrag.newInstance())
             .commit()
 
-//        calend.setOnDateChangeListener { _, year, month, dayOfMonth ->
-//            // Месяцы в CalendarView начинаются с 0, поэтому добавляем 1
-//            val selectedDate = "$dayOfMonth.${month + 1}.$year"
-//
-//            // Показываем Toast с выбранной датой
-//            Toast.makeText(this, "Вы выбрали: $selectedDate", Toast.LENGTH_SHORT).show()
-//        }
-        button.setOnClickListener {
-            supportFragmentManager.beginTransaction().replace(R.id.frame, BlackFrag.newInstance())
+        findViewById<Button>(R.id.frag1button).setOnClickListener {
+            fragmentManager.beginTransaction()
+                .replace(R.id.frame, BlackFrag.newInstance())
                 .commit()
-//            calend.setOnDateChangeListener{view,year,month,dayOfMonth->
-//                val selectDate ="$dayOfMonth"
-//                Toast.makeText(this,"", Toast.LENGTH_LONG).show()}
-//
-//        }
-            button2.setOnClickListener {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.frame, WhiteFrag.newInstance())
-                    .commit()
-            }
-
         }
 
+        findViewById<Button>(R.id.frag2button).setOnClickListener {
+            fragmentManager.beginTransaction()
+                .replace(R.id.frame, WhiteFrag.newInstance())
+                .commit()
+        }
     }
 
+    // Обработка события от BlackFrag
+    override fun onSeekBarPositionChanged(position: Int) {
+        val displayTextView = findViewById<TextView>(R.id.display_view)
+        displayTextView.text = "SeekBar Position: $position"
+    }
+
+    // Обработка события от WhiteFrag
+    override fun onDateSelected(date: String) {
+        val displayTextView = findViewById<TextView>(R.id.display_view)
+        displayTextView.text = "Selected Date: $date"
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//ZVZVZVZVOZOOVOOOooo
